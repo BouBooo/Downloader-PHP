@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme formYoutube 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}Hello DownloaderController!{% endblock %}
+
+{% block body %}
+
+<div class="container">
+
+    <h1>Downloader</h1>
+
+    <!-- Youtube Form -->
+
+    {{ form_start(formYoutube) }}
+
+    {{ form_row(formYoutube.youtube_link, {
+            'attr' : {
+                'placeholder' : 'Insert your Youtube track, channel or playlist here'
+            }
+        }) 
+    }}
+
+
+    {{ form_row(formYoutube.search) }}
+
+
+    {{ form_end(formYoutube) }}
+
+
+    <!-- Soundcloud Form -->
+
+    {{ form_start(formSoundcloud) }}
+
+    {{ form_row(formSoundcloud.soundcloud_link, {
+            'attr' : {
+                'placeholder' : 'Insert your Soundcloud track, artist or album here'
+            }
+        }) 
+    }}
+
+
+    {{ form_row(formSoundcloud.search) }}
+
+
+    {{ form_end(formSoundcloud) }}
+
+</div>
+{% endblock %}
