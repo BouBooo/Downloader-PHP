@@ -21,6 +21,14 @@ class DownloaderController extends AbstractController
 
         $YoutubeForm->handleRequest($request);
 
+        if($YoutubeForm->isSubmitted() && $YoutubeForm->isValid()) {
+
+            return $this->render('downloader/youtube.html.twig', [
+                'result' => $YoutubeForm['youtube_link']->getData()
+            ]);
+            //return $this->redirectToRoute('downloader/youtube.html.twig');
+        }
+
 
         $SoundcloudForm = $this->createFormBuilder()
                                 ->add('soundcloud_link')
@@ -28,6 +36,13 @@ class DownloaderController extends AbstractController
                                 ->getForm();
 
         $SoundcloudForm->handleRequest($request);
+
+        if($SoundcloudForm->isSubmitted() && $SoundcloudForm->isValid()) {
+
+            return $this->render('downloader/soundcloud.html.twig', [
+                'result' => $SoundcloudForm['soundcloud_link']->getData()
+            ]);
+        }
                 
         return $this->render('downloader/index.html.twig', [
             'formYoutube' => $YoutubeForm->createView(),
