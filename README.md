@@ -1,7 +1,8 @@
 ﻿# Downloader-PHP
 
 ## A propos
-  - Environnement: Windows Langage : PHP
+  - Environnement: Windows 
+  - Langage : PHP
 
 ## Fonctionnalités
 #### Télécharger des musiques venant de :
