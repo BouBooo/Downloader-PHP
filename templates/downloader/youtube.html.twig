@@ -6,8 +6,14 @@
 
 <div class="container">
     <h1>Youtube results</h1>
+    <br>
 
-    {{ result }}
+    <div class="row">
+        <a style="margin-left:12%" class="btn btn-primary" href="http://api.youtube6download.top/fetch/link.php?i={{ video }}">Download Link</a>
+        <a style="margin-left:20%" class="btn btn-primary" href="https://www.googleapis.com/youtube/v3/search?key={{ api_key }}&channelId=UCdWn0owvSX2DGe7ibLcXpow&part=snippet,id&order=date&maxResults=20">Channel infos</a>
+    </div>
+    <br>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     
 </div>
 {% endblock %}

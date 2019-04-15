@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SecurityController!{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+    <h1>Sign in ✅</h1>
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.email, {
+        'attr' : {
+            'placeholder' : 'Your email'
+        }
+    })
+    }}
+
+        {{ form_row(form.username, {
+        'attr' : {
+            'placeholder' : 'Your username'
+        }
+    }) 
+    }}
+
+        {{ form_row(form.password, {
+        'attr' : {
+            'placeholder' : 'Your password'
+        }
+    }) 
+    }}
+
+        {{ form_row(form.confirmPassword, {
+        'attr' : {
+            'placeholder' : 'Confirm your password'
+        }
+    })
+    }}
+
+    <button type="submit" class="btn btn-info">Sign in</button>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}
