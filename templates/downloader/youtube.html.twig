@@ -9,11 +9,49 @@
     <br>
 
     <div class="row">
-        <a style="margin-left:12%" class="btn btn-primary" href="http://api.youtube6download.top/fetch/link.php?i={{ video }}">Download Link</a>
-        <a style="margin-left:20%" class="btn btn-primary" href="https://www.googleapis.com/youtube/v3/search?key={{ api_key }}&channelId=UCdWn0owvSX2DGe7ibLcXpow&part=snippet,id&order=date&maxResults=20">Channel infos</a>
+
+        {% if list is defined %}
+
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list={{ list }}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        
+        {% elseif video is defined %}
+
+            <a style="margin-left:12%" class="btn btn-primary" href="http://api.youtube6download.top/fetch/link.php?i={{ video }}">Download Link</a>
+            <a style="margin-left:20%" class="btn btn-primary" href="https://www.googleapis.com/youtube/v3/search?key={{ api_key }}&channelId=UCdWn0owvSX2DGe7ibLcXpow&part=snippet,id&order=date&maxResults=20">Channel infos</a>
     </div>
     <br>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        
+        {% else %}
+            <table class="table table-light">
+                <thead>
+                    <tr>
+                        <th>Song</th>
+                        <th>Title</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in videoList %}
+                        {% if item.id.videoId is defined %}
+                            <tr>
+                                <td>
+                                    <iframe style="display: block" width="280" height="150" src="https://www.youtube.com/embed/{{ item.id.videoId }}" frameborder="3" allowfullscreen></iframe>
+                                </td>
+                                <td>
+                                    <h4 style="margin-top: 10%">
+                                        {{ title }}
+                                    </h4>
+                                </td>
+                                <td>
+                                    <p style="margin-top: 35%"> 
+                                        <a class="btn btn-primary" href="http://api.youtube6download.top/fetch/link.php?i={{ item.id.videoId }}">Download Link</a>
+                                    </p>
+                                </td>
+                            </tr>
+                        {% endif %}            
+                {% endfor %}
+        {% endif %}
     
 </div>
 {% endblock %}

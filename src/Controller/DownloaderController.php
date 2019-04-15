@@ -41,10 +41,17 @@ class DownloaderController extends AbstractController
                 parse_str( parse_url($url, PHP_URL_QUERY ), $my_array_of_vars );
                 $api_key = 'AIzaSyCUCIPiVy6t0KigYdr9LgwkK55kWuUywxQ';
 
+                // Youtube playlist
                 if(!empty($my_array_of_vars['list']))
                 {
-                    $video = '<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list='.$my_array_of_vars['list'].'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+                    $list = $my_array_of_vars['list'];
                     $download_link = '<span class="alert alert-danger"> Youtube playlist download don\'t work yet </span><br>';
+
+                    return $this->render('downloader/youtube.html.twig', [
+                        'list' => $list,
+                        'result' => $url,
+                        'api_key' => $api_key
+                    ]);
                 }
                 // Youtube track
                 else if(empty($my_array_of_vars['list']) && !empty($my_array_of_vars['v']))
@@ -58,6 +65,7 @@ class DownloaderController extends AbstractController
                     ]);
 
                 }
+                // Youtube channel
                 else
                 {
                     // Get Channel Id only from Ytb URL
@@ -69,6 +77,17 @@ class DownloaderController extends AbstractController
                     $videoList = json_decode(file_get_contents('https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&channelId='.$channelId.'&maxResults='.$maxResults.'&key='.$api_key.''));
 
                     $listVideoChannel = true;
+
+                    return $this->render('downloader/youtube.html.twig', [
+                        //'video' => $video,
+                        'result' => $url,
+                        'api_key' => $api_key,
+                        //'item' => $item,
+                        'videoList' => $videoList->items,
+                        'title' => 'title example'
+                        //'video_id' => $item->id->videoId
+                        //'title' => $item->snippet->title
+                    ]);
                 }   
             }
             else {
