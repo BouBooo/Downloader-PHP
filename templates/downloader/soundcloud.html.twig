@@ -4,10 +4,80 @@
 
 {% block body %}
 
-<div class="container">
+<div align="center" class="container">
     <h1>Soundcloud results</h1>
 
-    {{ result }}
-    
+    <!-- Track -->
+    {% if object is defined and object.kind == 'track' %}
+    <div align="center">
+        <div style="padding: 5px 5px 5px 5px; display: inline-block; border-radius: 3px;">
+            <h4>Genre : {{ object.genre }}</h4>
+                <img src="{{ object.user.avatar_url }}"/>
+                <br>
+                <br>
+                    <h3><a class="btn btn-primary" target='_blank' href='{{ download }}' >{{ object.title }}.{{ object.original_format }}</a></h3>
+        </div>
+        <br>
+            <div style="padding: 5px 5px 5px 5px; display: inline-block; border-radius: 3px;">
+                <h4>If the link above does not work, you can download manually here :</h4>
+                    <h3><a class="btn btn-info" target='_blank' href='{{ stream }}' download>{{ object.title }}.{{ object.original_format }}</a></h3>
+            </div>
+
+    {% elseif object is defined and object.kind == 'playlist' %}
+    <!-- Playlist -->
+    <div class='row'>
+                    
+        <table class='table table-light'>
+            <thead>
+                <tr>
+                    <th>Track count</th>
+                    <th>Track Title</th>
+                    <th width="33%">Download Track</th>
+                    <th>Download Manually</th>
+                </tr>
+            </thead>
+            <tbody>      
+                {% for key in object.tracks %}
+                    {% set count = count + 1 %}
+                    {% if key.stream_url is defined %}
+                        {% set url_str = key.stream_url ~ '?client_id=' ~ client_id %}
+
+                            
+                        <!--$url_str=$key->stream_url.'?client_id='.$client_id; -->
+
+
+                        <div class='row collapse'>
+                            <tr>
+                                <td>{{ count }}</td>
+                                <td>{{ key.title }}</td>
+                                <td>
+                                {% if object.downloadable %}
+                                    Downloadable
+                                {% else %}
+                                    No direct download allowed
+                                {% endif %}
+                                </td>
+                                <td><a class='btn btn-primary' target='_blank' href='{{ url_str }}'download>Download</a></td>
+                            </tr>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+ 
+                        <h4>Nous avons trouvé <b>{{ count }}</b> musiques téléchargeables dans cette playlist</h4><br>
+                    </tbody>
+                </table>
+           </div>
+
+    {% else %}
+        <br>
+        <span class="alert alert-danger"> Invalid download link</span>
+
+        <br>
+        <br>
+        <br>
+        <a href="{{ path('downloader') }}" class="btn btn-dark">Return to downloader</a>
+    {% endif %}
+    </div>
 </div>
 {% endblock %}

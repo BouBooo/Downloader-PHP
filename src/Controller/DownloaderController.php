@@ -72,7 +72,7 @@ class DownloaderController extends AbstractController
                     $parts = parse_url($url);
                     $path_parts= explode('/', $parts['path']);
                     $channelId = $path_parts[2];
-                    $maxResults = 30;
+                    $maxResults = 20;
 
                     $videoList = json_decode(file_get_contents('https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&channelId='.$channelId.'&maxResults='.$maxResults.'&key='.$api_key.''));
 
@@ -84,9 +84,6 @@ class DownloaderController extends AbstractController
                         'api_key' => $api_key,
                         //'item' => $item,
                         'videoList' => $videoList->items,
-                        'title' => 'title example'
-                        //'video_id' => $item->id->videoId
-                        //'title' => $item->snippet->title
                     ]);
                 }   
             }
@@ -100,6 +97,8 @@ class DownloaderController extends AbstractController
         }
 
 
+
+        
         $SoundcloudForm = $this->createFormBuilder()
                                 ->add('soundcloud_link')
                                 ->add('search', SubmitType::class)
@@ -108,9 +107,50 @@ class DownloaderController extends AbstractController
         $SoundcloudForm->handleRequest($request);
 
         if($SoundcloudForm->isSubmitted() && $SoundcloudForm->isValid()) {
+            
+            $url = $SoundcloudForm['soundcloud_link']->getData();
+            $api_key = '22e8f71d7ca75e156d6b2f0e0a5172b3';
+            $url_api='https://api.soundcloud.com/resolve.json?url='.$url.'&client_id='.$api_key;
+            try {
+                $json = file_get_contents($url_api);
+                $obj=json_decode($json);
+            } 
+            catch (ErrorException $e) {
+                exit($e->getMessage());
+            }
+
+            if($obj)
+            {                
+                // Soundcloud Playlist / Album
+                if($obj->kind == 'playlist')
+                {
+                    $index = 0;
+
+                    return $this->render('downloader/soundcloud.html.twig', [
+                        'url' => $url,
+                        'object' => $obj,
+                        'count' => $index,
+                        'client_id' => $api_key
+                    ]);
+                }
+                // Soundcloud Track
+                else if($obj->kind == 'track')
+                {
+                    return $this->render('downloader/soundcloud.html.twig', [
+                        'url' => $url,
+                        'object' => $obj,
+                        'stream' => $obj->stream_url.'?client_id='.$api_key,
+                        'download' => $obj->download_url.'?client_id='.$api_key
+                    ]);
+                }
+            }
+            else
+            {
+                header('Location: downloader.php');
+            }
 
             return $this->render('downloader/soundcloud.html.twig', [
-                'result' => $SoundcloudForm['soundcloud_link']->getData()
+                'url' => $url
             ]);
         }
                 
