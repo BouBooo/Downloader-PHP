@@ -50,9 +50,9 @@ class ApiController extends AbstractController
         $url = $this->getYoutubeLink($request);
         $validLink = $this->checkYoutubeLink($url);
 
-        if($apiKeyIsValid == true) {
+        if($apiKeyIsValid) {
 
-            if($validLink == true)  {
+            if($validLink)  {
                 return new JsonResponse([
                     'success' => "true",
                     'kind' => "Youtube URL",
@@ -92,9 +92,9 @@ class ApiController extends AbstractController
          $url = $this->getSoundcloudLink($request);
          $validLink = $this->checkSoundcloudLink($url);
  
-         if($apiKeyIsValid == true) {
+         if($apiKeyIsValid) {
  
-             if($validLink == true)  {
+             if($validLink)  {
                  return new JsonResponse([
                      'success' => "true",
                      'kind' => "Soundcloud URL",
@@ -154,7 +154,7 @@ class ApiController extends AbstractController
             return false;
         }
     }
-    
+
 
     public function getSoundcloudLink(Request $request) {
         return $request->query->get('url');
