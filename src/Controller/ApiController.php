@@ -55,6 +55,7 @@ class ApiController extends AbstractController
             if($validLink == true)  {
                 return new JsonResponse([
                     'success' => "true",
+                    'kind' => "Youtube URL",
                     'link' => $url,
                     'actions' => [
                         'stream' => "yes",
@@ -79,6 +80,48 @@ class ApiController extends AbstractController
             
     }
 
+
+    /**
+     * @Route("/api/soundcloud", name="soundcloud")
+     */
+     public function soundcloudLink(Request $request)
+     {
+         $key = $this->getApiKey($request);
+         $apiKeyIsValid = $this->checkApiKey($key);
+ 
+         $url = $this->getSoundcloudLink($request);
+         $validLink = $this->checkSoundcloudLink($url);
+ 
+         if($apiKeyIsValid == true) {
+ 
+             if($validLink == true)  {
+                 return new JsonResponse([
+                     'success' => "true",
+                     'kind' => "Soundcloud URL",
+                     'link' => $url,
+                     'actions' => [
+                         'stream' => "yes",
+                         'download' => "yes"
+                     ]
+                 ]);
+             }
+             else    {
+                 return new JsonResponse([
+                     'success' => "false",
+                     'message' => "Invalid Soundcloud url"
+                 ]);
+             }
+         }
+         else    {
+             
+             return new JsonResponse([
+                 'success' => "false",
+                 'message' => "Please enter valid API key"
+             ]);
+             }
+             
+     }
+
     public function getYoutubeLink(Request $request) {
         return $request->query->get('url');
     }
@@ -97,10 +140,27 @@ class ApiController extends AbstractController
         }
     }
 
-    public function checkApiKey($key)
-    {        
-        return ($key == "myapikey");
+
+    public function checkSoundcloudLink($url) {
+        $regex_pattern = "/^https?:\/\/soundcloud\.com\/\S+\/\S+$/i";
+        $match;
+
+        if(preg_match($regex_pattern, $url, $match)) {
+            parse_str(parse_url($url, PHP_URL_QUERY ), $my_array_of_vars );
+
+            return $url;
+        } 
+        else {
+            return false;
+        }
     }
+    
+
+    public function getSoundcloudLink(Request $request) {
+        return $request->query->get('url');
+    }
+
+
 
 
     public function getApiKey(Request $request)
@@ -108,6 +168,10 @@ class ApiController extends AbstractController
         return $request->query->get('api_key');
     }
 
+    public function checkApiKey($key)
+    {        
+        return ($key == "myapikey");
+    }
 
 
 }
