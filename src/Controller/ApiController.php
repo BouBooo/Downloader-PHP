@@ -10,6 +10,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ApiController extends AbstractController
 {
+
+    /*************************************/
+    /*                                   */
+    /*             ROUTES                */
+    /*                                   */
+    /*************************************/
+
     /**
      * @Route("/api", name="api")
      */
@@ -49,7 +56,7 @@ class ApiController extends AbstractController
 
         $url = $this->getYoutubeLink($request);
         $validLink = $this->checkYoutubeLink($url);
-        $obj = $this->getYoutubeObject($url);
+        $obj = $this->getYoutubeObject($obj);
 
         if($apiKeyIsValid) {
 
@@ -91,22 +98,22 @@ class ApiController extends AbstractController
          $key = $this->getApiKey($request);
          $apiKeyIsValid = $this->checkApiKey($key);
  
+         $soundcloudClient = $this->getSoundcloudApiKey();
          $url = $this->getSoundcloudLink($request);
          $validLink = $this->checkSoundcloudLink($url);
          $obj = $this->getSoundcloudObject($url);
+         $tracksInfos = $this->listSoundcloudTracks($obj);
+         //$array = $this->getTracksArray($tracks);
  
          if($apiKeyIsValid) {
  
              if($validLink)  {
                  return new JsonResponse([
                      'success' => "true",
-                     'kind' => "Soundcloud URL",
+                     'about' => "Soundcloud URL",
                      'link' => $url,
-                     'actions' => [
-                         'stream' => "yes",
-                         'download' => "yes"
-                     ],
-                     'object' => $obj
+                     'kind' => $obj->kind,  
+                    'Tracks' => $tracksInfos
                  ]);
              }
              else    {
@@ -125,6 +132,15 @@ class ApiController extends AbstractController
              }
              
      }
+
+
+
+    /*************************************/
+    /*                                   */
+    /*             YOUTUBE               */
+    /*                                   */
+    /*************************************/
+
 
     public function getYoutubeLink(Request $request) {
         return $request->query->get('url');
@@ -151,21 +167,29 @@ class ApiController extends AbstractController
         return $my_array_of_vars ?? false;
     }
 
-    public function getSoundcloudObject($url) {
-        $client = '22e8f71d7ca75e156d6b2f0e0a5172b3';
-        $url_api='https://api.soundcloud.com/resolve.json?url='.$url.'&client_id='.$client;
-        $json = file_get_contents($url_api);
-        $obj=json_decode($json);
-        return $obj ?? false;
-    }
 
+
+
+    /*************************************/
+    /*                                   */
+    /*             SOUNDCLOUD            */
+    /*                                   */
+    /*************************************/
+
+    public function getSoundcloudApiKey() {
+        $client_id = 'f4094fb8beec3feadb35909471ac9bf5';
+        return $client_id;
+    }
+    public function getSoundcloudLink(Request $request) {
+        return $request->query->get('url');
+    }
 
     public function checkSoundcloudLink($url) {
         $regex_pattern = "/^https?:\/\/soundcloud\.com\/\S+\/\S+$/i";
         $match;
 
         if(preg_match($regex_pattern, $url, $match)) {
-            parse_str(parse_url($url, PHP_URL_QUERY ), $my_array_of_vars );
+            parse_str(parse_url($url, PHP_URL_QUERY), $my_array_of_vars );
 
             return $url;
         } 
@@ -175,12 +199,52 @@ class ApiController extends AbstractController
     }
 
 
-    public function getSoundcloudLink(Request $request) {
-        return $request->query->get('url');
+    public function getSoundcloudObject($url) {
+        $client = '22e8f71d7ca75e156d6b2f0e0a5172b3';
+        $url_api='https://api.soundcloud.com/resolve.json?url='.$url.'&client_id='.$client;
+        $json = file_get_contents($url_api);
+        $obj=json_decode($json);
+        return $obj ?? false;
+    }
+
+    public function listSoundcloudTracks($obj) {
+        if($obj->kind == 'playlist') {
+            $index = [];
+            $tracks = [];
+
+            foreach($obj->tracks as $track) {
+                
+                array_push($tracks, [
+                    'title' => $track->title,
+                    'id' => $track->id,
+                ]);
+
+            }
+            return $tracks;
+        }
+        else {
+            return $obj;
+        }           
+    }
+
+
+    public function getTracksArray($tracks) {
+        $tab = [];
+        foreach($tracks as $track) {
+            $stream_url = $track->stream_url;
+            return array_push($tab, $stream_url);
+        }
     }
 
 
 
+
+
+    /*************************************/
+    /*                                   */
+    /*             API KEY               */
+    /*                                   */
+    /*************************************/
 
     public function getApiKey(Request $request)
     {        
