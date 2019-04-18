@@ -49,6 +49,7 @@ class ApiController extends AbstractController
 
         $url = $this->getYoutubeLink($request);
         $validLink = $this->checkYoutubeLink($url);
+        $obj = $this->getYoutubeObject($url);
 
         if($apiKeyIsValid) {
 
@@ -60,7 +61,8 @@ class ApiController extends AbstractController
                     'actions' => [
                         'stream' => "yes",
                         'download' => "yes"
-                    ]
+                    ],
+                    'object' => $obj
                 ]);
             }
             else    {
@@ -91,6 +93,7 @@ class ApiController extends AbstractController
  
          $url = $this->getSoundcloudLink($request);
          $validLink = $this->checkSoundcloudLink($url);
+         $obj = $this->getSoundcloudObject($url);
  
          if($apiKeyIsValid) {
  
@@ -102,7 +105,8 @@ class ApiController extends AbstractController
                      'actions' => [
                          'stream' => "yes",
                          'download' => "yes"
-                     ]
+                     ],
+                     'object' => $obj
                  ]);
              }
              else    {
@@ -138,6 +142,21 @@ class ApiController extends AbstractController
         else {
             return false;
         }
+    }
+
+    public function getYoutubeObject($url) {
+        
+        parse_str( parse_url( $url, PHP_URL_QUERY ), $my_array_of_vars );
+        $api_key = 'AIzaSyCUCIPiVy6t0KigYdr9LgwkK55kWuUywxQ';
+        return $my_array_of_vars ?? false;
+    }
+
+    public function getSoundcloudObject($url) {
+        $client = '22e8f71d7ca75e156d6b2f0e0a5172b3';
+        $url_api='https://api.soundcloud.com/resolve.json?url='.$url.'&client_id='.$client;
+        $json = file_get_contents($url_api);
+        $obj=json_decode($json);
+        return $obj ?? false;
     }
 
 
