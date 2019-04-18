@@ -56,7 +56,7 @@ class ApiController extends AbstractController
 
         $url = $this->getYoutubeLink($request);
         $validLink = $this->checkYoutubeLink($url);
-        $obj = $this->getYoutubeObject($obj);
+        $obj = $this->getYoutubeObject($url);
 
         if($apiKeyIsValid) {
 
@@ -161,10 +161,10 @@ class ApiController extends AbstractController
     }
 
     public function getYoutubeObject($url) {
-        
         parse_str( parse_url( $url, PHP_URL_QUERY ), $my_array_of_vars );
+        $obj = $my_array_of_vars;
         $api_key = 'AIzaSyCUCIPiVy6t0KigYdr9LgwkK55kWuUywxQ';
-        return $my_array_of_vars ?? false;
+        return $obj ?? false;
     }
 
 
