@@ -102,18 +102,18 @@ class ApiController extends AbstractController
          $url = $this->getSoundcloudLink($request);
          $validLink = $this->checkSoundcloudLink($url);
          $obj = $this->getSoundcloudObject($url);
-         $tracksInfos = $this->listSoundcloudTracks($obj);
-         //$array = $this->getTracksArray($tracks);
+         $kind = $this->getKindSoundcloudLink($obj);
+         $tracksInfos = $this->listSoundcloudTracks($obj, $soundcloudClient);
  
          if($apiKeyIsValid) {
  
              if($validLink)  {
                  return new JsonResponse([
-                     'success' => "true",
-                     'about' => "Soundcloud URL",
-                     'link' => $url,
-                     'kind' => $obj->kind,  
-                    'Tracks' => $tracksInfos
+                    'success' => "true",
+                    'about' => "Soundcloud URL",
+                    'link' => $url,
+                    'kind' => $obj->kind,  
+                    $kind => $tracksInfos
                  ]);
              }
              else    {
@@ -207,23 +207,29 @@ class ApiController extends AbstractController
         return $obj ?? false;
     }
 
-    public function listSoundcloudTracks($obj) {
+
+    public function getKindSoundcloudLink($obj) {
+        return $obj->kind;
+    }
+    public function listSoundcloudTracks($obj, $soundcloudClient) {
         if($obj->kind == 'playlist') {
-            $index = [];
             $tracks = [];
 
             foreach($obj->tracks as $track) {
-                
                 array_push($tracks, [
                     'title' => $track->title,
-                    'id' => $track->id,
+                    'stream_url' =>  $track->uri . '/stream?client_id=' . $soundcloudClient
                 ]);
 
             }
             return $tracks;
         }
         else {
-            return $obj;
+            return [
+                'title' => $obj->title,
+                'download_url' => $obj->download_url . '?client_id=' . $soundcloudClient,
+                'stream_url' => $obj->stream_url . '?client_id=' . $soundcloudClient,
+            ];
         }           
     }
 
