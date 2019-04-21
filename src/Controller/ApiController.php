@@ -51,26 +51,56 @@ class ApiController extends AbstractController
      */
     public function youtubeLink(Request $request)
     {
+        $youtubeClient = $this->getYoutubeApiKey();
         $key = $this->getApiKey($request);
         $apiKeyIsValid = $this->checkApiKey($key);
 
         $url = $this->getYoutubeLink($request);
         $validLink = $this->checkYoutubeLink($url);
         $obj = $this->getYoutubeObject($url);
+        $kind = $this->getKindYoutubeLink($obj);
+
+
+
+        if($kind == 'channel') {
+            $videoList = $this->extractChannelVideos($url, $youtubeClient);
+            $listTracks = $this->getAllTracksChannel($videoList, $youtubeClient);
+            $tracks = $this->getAllVideosInfosYoutube($listTracks, $youtubeClient);
+        }
 
         if($apiKeyIsValid) {
 
             if($validLink)  {
-                return new JsonResponse([
-                    'success' => "true",
-                    'kind' => "Youtube URL",
-                    'link' => $url,
-                    'actions' => [
-                        'stream' => "yes",
-                        'download' => "yes"
-                    ],
-                    'object' => $obj
-                ]);
+                if(isset($obj['v'])) {
+                    return new JsonResponse([
+                        'success' => "true",
+                        'about' => "Youtube URL",
+                        'link' => $url,
+                        'kind' => $kind,
+                        'video_id' => $obj['v'],
+                        'download_url' => 'http://api.youtube6download.top/fetch/link.php?i=' . $obj['v'],
+                        'channel_infos' => 'https://www.googleapis.com/youtube/v3/search?key='.$youtubeClient.'&channelId=UCdWn0owvSX2DGe7ibLcXpow&part=snippet,id&order=date&maxResults=20'
+                    ]);
+                }
+                else if(isset($obj['list'])){
+                    return new JsonResponse([
+                        'success' => "true",
+                        'about' => "Youtube URL",
+                        'link' => $url,
+                        'kind' => $kind,
+                        'list_id' => $obj['list'],
+                    ]);
+                } 
+                else {
+                    return new JsonResponse([
+                        'success' => "true",
+                        'about' => "Youtube URL",
+                        'link' => $url,
+                        'kind' => $kind,
+                        'tracks' => $tracks        
+                    ]); 
+                }
+
             }
             else    {
                 return new JsonResponse([
@@ -142,6 +172,11 @@ class ApiController extends AbstractController
     /*************************************/
 
 
+    public function getYoutubeApiKey() {
+        $client_id = 'AIzaSyCUCIPiVy6t0KigYdr9LgwkK55kWuUywxQ';
+        return $client_id;
+    }
+
     public function getYoutubeLink(Request $request) {
         return $request->query->get('url');
     }
@@ -167,7 +202,45 @@ class ApiController extends AbstractController
         return $obj ?? false;
     }
 
+    public function getKindYoutubeLink($obj) {
+        if(!empty($obj['v'])) {
+            return $kind = 'track';
+        } else if(!empty($obj['list'])) {
+            return $kind = 'playlist';
+        } else {
+            return $kind = 'channel';
+        }
+    }
 
+    public function extractChannelVideos($url, $youtubeClient) {
+        $parts = parse_url($url);
+        $path_parts= explode('/', $parts['path']);
+        $channelId = $path_parts[2];
+        $maxResults = 30;
+
+        $videoList = json_decode(file_get_contents('https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&channelId='.$channelId.'&maxResults='.$maxResults.'&key='.$youtubeClient.''));
+
+        return $videoList;
+    }
+
+    public function getAllTracksChannel($videoList, $youtubeClient) {
+        $listTracks = $videoList->items;
+        return $listTracks;
+    }
+
+
+
+    public function getAllVideosInfosYoutube($items, $youtubeClient) {
+        $tracks = [];
+
+        foreach($items as $item) {
+            array_push($tracks, [
+                'title' => $item->snippet->title,
+                'download_url' => 'http://api.youtube6download.top/fetch/link.php?i=' . $item->id->videoId,
+            ]);
+        }
+        return $tracks;
+    }
 
 
     /*************************************/
