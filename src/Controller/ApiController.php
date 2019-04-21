@@ -60,12 +60,14 @@ class ApiController extends AbstractController
         $obj = $this->getYoutubeObject($url);
         $kind = $this->getKindYoutubeLink($obj);
 
-
-
         if($kind == 'channel') {
             $videoList = $this->extractChannelVideos($url, $youtubeClient);
             $listTracks = $this->getAllTracksChannel($videoList, $youtubeClient);
             $tracks = $this->getAllVideosInfosYoutube($listTracks, $youtubeClient);
+        }
+
+        if(isset($obj['list']))  {
+            $listTracks = $this->getVideosFromPlaylist($obj, $youtubeClient);
         }
 
         if($apiKeyIsValid) {
@@ -89,6 +91,7 @@ class ApiController extends AbstractController
                         'link' => $url,
                         'kind' => $kind,
                         'list_id' => $obj['list'],
+                        'infos' => $listTracks
                     ]);
                 } 
                 else {
@@ -210,6 +213,12 @@ class ApiController extends AbstractController
         } else {
             return $kind = 'channel';
         }
+    }
+
+    public function getVideosFromPlaylist($obj, $youtubeClient) {
+        $videoList = json_decode(file_get_contents('https://www.googleapis.com/youtube/v3/playlists?part=snippet&id='.$obj['list'].'&key='.$youtubeClient));
+
+        return $videoList;
     }
 
     public function extractChannelVideos($url, $youtubeClient) {
