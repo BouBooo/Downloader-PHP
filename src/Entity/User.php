@@ -108,6 +108,5 @@ class User implements UserInterface
 
     public function getRoles() {
         return ['ROLE_USER'];
-        // return ['ROLES_USER'];   <-- ancien code MDRR
     }
 }
