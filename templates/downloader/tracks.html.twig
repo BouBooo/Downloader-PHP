@@ -3,14 +3,44 @@
 
 {% block body %}
 
+
+
 <div class="container">
-    <h1>{{ user.username }}'s Tracks</h1>
+        <h1 align="center">{{ user.username }}'s Tracks</h1><br>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="table-responsive">
+            
+            {% if tracks is not empty %}
+                <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                    <th>Url</th>
+                    <th>Platform</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for track in tracks %}
+                        <tr>
+                            <td>{{ track.url }}</td>
+                            <td>{{ track.platform }}</td>
+                            </tr>
+                    {% endfor %}
+                    
+                </tbody>
+                </table>
+            </div>
+
+            {% else %}
+                <h4>
+                    No recorded music. Go to the Downloader tab, and search for music to find them here
+                </h4>
+            {% endif %}
+        </div>
+    </div>
+  </div>
 </div>
 
-<ul>
-    {% for track in tracks %}
-        <li>{{ track }}</li>
-    {% endfor %}
-</ul>
 
 {% endblock %}

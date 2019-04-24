@@ -27,6 +27,11 @@ class Track
      */
     private $userId;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $platform;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +57,18 @@ class Track
     public function setUserId(?User $userId): self
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getPlatform(): ?string
+    {
+        return $this->platform;
+    }
+
+    public function setPlatform(?string $platform): self
+    {
+        $this->platform = $platform;
 
         return $this;
     }

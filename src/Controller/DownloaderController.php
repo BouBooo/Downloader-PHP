@@ -62,6 +62,7 @@ class DownloaderController extends AbstractController
         if($YoutubeForm->isSubmitted() && $YoutubeForm->isValid()) {
 
             $url = $YoutubeForm['youtube_link']->getData();
+            $_SESSION['url'] = $url;
             $regex_pattern = "/(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/";
             $match;
             
@@ -76,6 +77,22 @@ class DownloaderController extends AbstractController
                     $list = $my_array_of_vars['list'];
                     $download_link = '<span class="alert alert-danger"> Youtube playlist download don\'t work yet </span><br>';
 
+                    $track = new Track();
+                    $form = $this->createForm(SaveTrackType::class,$track);
+
+                    $form->handleRequest($request);
+
+                    $url = $_SESSION['url']; 
+                    $userId = $this->getUser();
+                    $platform = "Youtube";
+
+                    $track->setUrl($url)
+                            ->setUserId($userId)
+                            ->setPlatform($platform);
+
+                    $manager->persist($track);
+                    $manager->flush();
+
                     return $this->render('downloader/youtube.html.twig', [
                         'list' => $list,
                         'result' => $url,
@@ -86,6 +103,22 @@ class DownloaderController extends AbstractController
                 else if(empty($my_array_of_vars['list']) && !empty($my_array_of_vars['v']))
                 {               
                     $video = $my_array_of_vars['v'];
+
+                    $track = new Track();
+                    $form = $this->createForm(SaveTrackType::class,$track);
+
+                    $form->handleRequest($request);
+
+                    $url = $_SESSION['url']; 
+                    $userId = $this->getUser();
+                    $platform = "Youtube";
+
+                    $track->setUrl($url)
+                            ->setUserId($userId)
+                            ->setPlatform($platform);
+
+                    $manager->persist($track);
+                    $manager->flush();
 
                     return $this->render('downloader/youtube.html.twig', [
                         'video' => $video,
@@ -155,6 +188,21 @@ class DownloaderController extends AbstractController
                 if($obj->kind == 'playlist')
                 {
                     $index = 0;
+                    $track = new Track();
+                    $form = $this->createForm(SaveTrackType::class,$track);
+
+                    $form->handleRequest($request);
+
+                    $url = $_SESSION['url']; 
+                    $userId = $this->getUser();
+                    $platform = "Soundcloud";
+
+                    $track->setUrl($url)
+                            ->setUserId($userId)
+                            ->setPlatform($platform);
+
+                    $manager->persist($track);
+                    $manager->flush(); 
 
                     return $this->render('downloader/soundcloud.html.twig', [
                         'url' => $url,
@@ -173,9 +221,11 @@ class DownloaderController extends AbstractController
 
                     $url = $_SESSION['url']; 
                     $userId = $this->getUser();
+                    $platform = "Soundcloud";
 
                     $track->setUrl($url)
-                            ->setUserId($userId);
+                            ->setUserId($userId)
+                            ->setPlatform($platform);
 
                     $manager->persist($track);
                     $manager->flush();
