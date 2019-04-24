@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+<div class="container">
+    <h1>{{ user.username }}'s Tracks</h1>
+</div>
+
+<ul>
+    {% for track in tracks %}
+        <li>{{ track }}</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

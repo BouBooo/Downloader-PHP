@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Downloader {% endblock %}
 
 {% block body %}
 
@@ -16,14 +15,22 @@
                 <br>
                 <br>
                     <h3><a class="btn btn-primary" target='_blank' href='{{ download }}' >{{ object.title }}.{{ object.original_format }}</a></h3>
+                    
         </div>
         <br>
             <div style="padding: 5px 5px 5px 5px; display: inline-block; border-radius: 3px;">
                 <h4>If the link above does not work, you can download manually here :</h4>
                     <h3><a class="btn btn-info" target='_blank' href='{{ stream }}' download>{{ object.title }}.{{ object.original_format }}</a></h3>
+
+                    {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    {{ form_end(form) }}
+                    
             </div>
 
     {% elseif object is defined and object.kind == 'playlist' %}
+
     <!-- Playlist -->
     <div class='row'>
                     
@@ -32,8 +39,8 @@
                 <tr>
                     <th>Track count</th>
                     <th>Track Title</th>
-                    <th width="33%">Download Track</th>
                     <th>Download Manually</th>
+                    <th>Save</th>
                 </tr>
             </thead>
             <tbody>      
@@ -50,14 +57,8 @@
                             <tr>
                                 <td>{{ count }}</td>
                                 <td>{{ key.title }}</td>
-                                <td>
-                                {% if object.downloadable %}
-                                    Downloadable
-                                {% else %}
-                                    No direct download allowed
-                                {% endif %}
-                                </td>
                                 <td><a class='btn btn-primary' target='_blank' href='{{ url_str }}'download>Download</a></td>
+                                <td><a href="#" class="btn btn-success">Save</a></td>
                             </tr>
                         </div>
                     {% endif %}

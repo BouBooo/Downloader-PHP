@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -46,6 +48,16 @@ class User implements UserInterface
      *
      */
     private $confirmPassword;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Track", mappedBy="userId", orphanRemoval=true)
+     */
+    private $tracks;
+
+    public function __construct()
+    {
+        $this->tracks = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -108,6 +120,36 @@ class User implements UserInterface
 
     public function getRoles() {
         return ['ROLE_USER'];
-        // return ['ROLES_USER'];   <-- ancien code MDRR
+    }
+
+    /**
+     * @return Collection|Track[]
+     */
+    public function getTracks(): Collection
+    {
+        return $this->tracks;
+    }
+
+    public function addTrack(Track $track): self
+    {
+        if (!$this->tracks->contains($track)) {
+            $this->tracks[] = $track;
+            $track->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTrack(Track $track): self
+    {
+        if ($this->tracks->contains($track)) {
+            $this->tracks->removeElement($track);
+            // set the owning side to null (unless already changed)
+            if ($track->getUserId() === $this) {
+                $track->setUserId(null);
+            }
+        }
+
+        return $this;
     }
 }

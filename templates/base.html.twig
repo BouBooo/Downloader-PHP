@@ -8,7 +8,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <link href='http://fonts.googleapis.com/css?family=Holtwood+One+SC' rel='stylesheet' type='text/css'>
         
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Mass Music{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
     </head>
 <style>
@@ -27,6 +27,9 @@
             <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('downloader') }}">Downloader<span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('my_tracks') }}">My Tracks<span class="sr-only"></span></a>
             </li>
             {% if not app.user %}
             <li class="nav-item">
