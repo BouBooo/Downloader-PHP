@@ -120,7 +120,6 @@ class User implements UserInterface
 
     public function getRoles() {
         return ['ROLE_USER'];
-<<<<<<< HEAD
     }
 
     /**
@@ -152,7 +151,5 @@ class User implements UserInterface
         }
 
         return $this;
-=======
->>>>>>> 8e798fabf7532c3538d2f2ff2062c4ca41f0f7ef
     }
 }
