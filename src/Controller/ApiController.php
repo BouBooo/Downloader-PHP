@@ -59,6 +59,7 @@ class ApiController extends AbstractController
         $validLink = $this->checkYoutubeLink($url);
         $obj = $this->getYoutubeObject($url);
         $kind = $this->getKindYoutubeLink($obj);
+        
 
         if($kind == 'channel') {
             $videoList = $this->extractChannelVideos($url, $youtubeClient);

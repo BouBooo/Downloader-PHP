@@ -54,7 +54,7 @@ class DownloaderController extends AbstractController
     {   
         $YoutubeForm = $this->createFormBuilder()
                             ->add('youtube_link')
-                            ->add('search', SubmitType::class)
+                            ->add('start', SubmitType::class)
                             ->getForm();
 
         $YoutubeForm->handleRequest($request);
@@ -163,7 +163,7 @@ class DownloaderController extends AbstractController
         
         $SoundcloudForm = $this->createFormBuilder()
                                 ->add('soundcloud_link')
-                                ->add('search', SubmitType::class)
+                                ->add('start', SubmitType::class)
                                 ->getForm();
 
         $SoundcloudForm->handleRequest($request);
